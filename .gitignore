@@ -43,3 +43,7 @@ next-env.d.ts
 # git internals (should not be committed)
 index.lock
 info/
+
+# dist
+/dist
+
