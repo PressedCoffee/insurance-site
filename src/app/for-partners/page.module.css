@@ -1,0 +1,228 @@
+/**
+ * For Partners Page Styles
+ * Clean, professional, aligned with site aesthetic
+ */
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #0f172a;
+  background: #f8fafc;
+  line-height: 1.6;
+}
+
+/* Hero */
+.hero {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2.5rem 1.5rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.hero h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 700;
+  margin: 0 0 1rem;
+  color: #1e293b;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: #475569;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Sections */
+.section {
+  margin-bottom: 2.5rem;
+  background: #ffffff;
+  padding: 1.75rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.section h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+  color: #1e293b;
+}
+
+.section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: #334155;
+}
+
+.section h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.75rem;
+  color: #64748b;
+}
+
+.section p {
+  margin: 0 0 1rem;
+  color: #475569;
+}
+
+.section p:last-child {
+  margin-bottom: 0;
+}
+
+.section ul {
+  margin: 0 0 1rem;
+  padding-left: 1.5rem;
+}
+
+.section li {
+  margin-bottom: 0.5rem;
+  color: #475569;
+}
+
+.note {
+  font-size: 0.9rem;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 1rem;
+  border-radius: 6px;
+  border-left: 3px solid #6366f1;
+}
+
+/* Steps */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 6px;
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: #4338ca;
+  color: white;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.step h3 {
+  margin: 0 0 0.25rem;
+}
+
+.step p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Comparison */
+.comparison {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.comparison-col {
+  padding: 1.25rem;
+  background: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.comparison-col.highlight {
+  background: #eef2ff;
+  border-color: #6366f1;
+}
+
+.comparison-col ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.comparison-col li {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Link Example */
+.link-example {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #1e293b;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.link-example code {
+  color: #e2e8f0;
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.footer p {
+  margin: 0 0 0.5rem;
+}
+
+.footer a {
+  color: #4338ca;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .hero {
+    padding: 1.5rem 1rem;
+  }
+  
+  .section {
+    padding: 1.25rem;
+  }
+  
+  .step {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .comparison {
+    grid-template-columns: 1fr;
+  }
+}
