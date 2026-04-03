@@ -1,5 +1,3 @@
-'use client';
-
 import './page.module.css';
 
 /**
