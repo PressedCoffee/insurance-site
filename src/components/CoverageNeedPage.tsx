@@ -402,11 +402,16 @@ export function CoverageNeedPage({ analytics = defaultAnalytics }: CoverageNeedP
 
       {/* What This Number Means */}
       <section className="coverage-explanation" aria-labelledby="what-this-number-means">
-        <h2 id="what-this-number-means">What this number means</h2>
+        <h2 id="what-this-number-means">What goes into a coverage estimate</h2>
         <p>
           This is a rough estimate based on the inputs you provided. It assumes you want to 
           replace a portion of your income for a set number of years, cover specific debts 
           and obligations, and account for coverage you already have.
+        </p>
+        <p>
+          <strong>What it includes:</strong> Income replacement based on your percentage and years, 
+          debts you choose to cover, education funding, final expenses, minus any existing coverage 
+          and liquid assets.
         </p>
         <p>
           <strong>What it doesn't include:</strong> Future income changes, inflation, non-wage 
@@ -415,18 +420,59 @@ export function CoverageNeedPage({ analytics = defaultAnalytics }: CoverageNeedP
         </p>
       </section>
 
-      {/* How To Use This Estimate */}
-      <section className="coverage-usage" aria-labelledby="how-to-use">
-        <h2 id="how-to-use">How to use this estimate</h2>
+      {/* Is 10x Income Accurate */}
+      <section className="coverage-usage" aria-labelledby="ten-x-rule">
+        <h2 id="ten-x-rule">Is the 10x income rule accurate?</h2>
+        <p className="coverage-section__intro">
+          The common "multiply your income by 10" guideline works for some situations, but not all. 
+          It depends on what you're actually trying to cover.
+        </p>
         <ul>
-          <li>Start with it. Compare quotes using this amount, then adjust up or down based on what you learn.</li>
-          <li>Consider whether you prefer more coverage for fewer years, or less coverage for longer.</li>
-          <li>If you have employer coverage, it's already factored into the calculation if you entered it above.</li>
+          <li><strong>Might be too high:</strong> If you have substantial existing coverage, employer life insurance, 
+          or a partner who would continue earning income.</li>
+          <li><strong>Might be too low:</strong> If you have significant debt, multiple children to support through college, 
+          or a mortgage that won't be paid off for decades.</li>
+          <li><strong>Depends on duration:</strong> 10x income for 10 years of replacement looks different than 10x for 20 years.</li>
+        </ul>
+      </section>
+
+      {/* Existing Coverage */}
+      <section className="coverage-usage" aria-labelledby="existing-coverage-section">
+        <h2 id="existing-coverage-section">What about existing coverage?</h2>
+        <p className="coverage-section__intro">
+          Include all life insurance that would pay out upon death—this includes employer coverage 
+          that moves with you if you leave the job (portable coverage).
+        </p>
+        <ul>
+          <li>Employer-provided group life insurance (check if it's portable)</li>
+          <li>Individual policies you already own</li>
+          <li>Conversion options from previous employer policies</li>
+          <li>Liquid assets you could use in an emergency (optional offset)</li>
+        </ul>
+      </section>
+
+      {/* Term Lengths */}
+      <section className="coverage-usage" aria-labelledby="term-lengths">
+        <h2 id="term-lengths">How do different term lengths affect things?</h2>
+        <p className="coverage-section__intro">
+          Coverage amount and term length are interdependent. A 20-year term with $500,000 coverage 
+          protects different needs than a 10-year term with $1M coverage, even if the total payout 
+          is similar.
+        </p>
+        <ul>
+          <li><strong>10-year term:</strong> Lower cost, good for covering specific debts that will be paid off soon</li>
+          <li><strong>20-year term:</strong> Common choice for families with young children</li>
+          <li><strong>30-year term:</strong> Covers until retirement age for most people</li>
+          <li>Longer terms cost more because they cover higher-risk years</li>
         </ul>
       </section>
 
       {/* CTAs */}
       <section className="coverage-ctas" aria-label="Next steps">
+        <p className="coverage-ctas__disclaimer">
+          Quotes are estimates based on the information you provide. 
+          Final rates are determined by underwriting and may differ.
+        </p>
         <div className="coverage-ctas__primary">
           <button
             type="button"
@@ -505,6 +551,26 @@ export function CoverageNeedPage({ analytics = defaultAnalytics }: CoverageNeedP
             depends on factors this tool cannot see: how your income might change, exact 
             future expenses, your partner's financial situation, and other variables. Use this 
             as a starting point, not a precise figure.
+          </p>
+        </details>
+
+        <details className="coverage-faq__item">
+          <summary>What happens after I get an estimate?</summary>
+          <p>
+            You can get instant quotes from multiple carriers through Quote & Apply by BackNine. 
+            No phone number required. If you choose to apply, the process ranges from minutes 
+            (accelerated underwriting) to weeks (exam required). <a href="/underwriting-transparency">
+            Learn what happens after you apply</a>.
+          </p>
+        </details>
+
+        <details className="coverage-faq__item">
+          <summary>Do I have to talk to someone?</summary>
+          <p>
+            No. The Quote & Apply system is self-serve. You can view quotes, start applications, 
+            and even schedule medical exams (if required) without speaking to anyone. A licensed 
+            producer (Ryan Rostine, CA #4479678) reviews applications and is available for 
+            questions, but you're not required to meet or call.
           </p>
         </details>
       </section>

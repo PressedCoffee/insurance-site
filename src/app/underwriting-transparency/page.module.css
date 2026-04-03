@@ -189,6 +189,10 @@
 }
 
 /* What slows things down */
+.slowdownsSection {
+  margin-bottom: var(--uw-spacing-2xl);
+}
+
 .slowdownsGrid {
   display: grid;
   gap: var(--uw-spacing-md);

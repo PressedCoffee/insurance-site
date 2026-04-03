@@ -482,6 +482,14 @@
   line-height: 1.6;
 }
 
+.coverage-ctas__disclaimer {
+  font-size: 0.8125rem;
+  color: var(--coverage-text-muted);
+  margin-bottom: var(--coverage-spacing-lg);
+  font-style: italic;
+  line-height: 1.5;
+}
+
 /* FAQ */
 .coverage-faq {
   max-width: 720px;
