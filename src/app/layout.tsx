@@ -15,14 +15,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://rostineinsurance.com'),
   title: {
-    default: 'Ryan Rostine | Life Insurance | rostineinsurance.com',
+    default: 'How Much Life Insurance Do I Need? | Free Calculator | rostineinsurance.com',
     template: '%s | rostineinsurance.com',
   },
-  description: 'Independent life insurance for California. Calculate your coverage need and understand the process.',
+  description: 'Calculate your life insurance coverage need in 2 minutes. Transparent assumptions. No phone number required. California independent advisor.',
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: 'Ryan Rostine | Life Insurance',
-    description: 'Independent life insurance for California. Calculate your coverage need and understand the process.',
+    title: 'How Much Life Insurance Do I Need? | Free Calculator',
+    description: 'Calculate your life insurance coverage need in 2 minutes. Transparent assumptions. No phone number required.',
     siteName: 'rostineinsurance.com',
     locale: 'en_US',
     type: 'website',

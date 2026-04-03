@@ -7,6 +7,14 @@ import './page.module.css';
  * One-pager for referral partners, BDRs, and collaborators
  * Clear value proposition without positioning drift
  */
+export const metadata = {
+  title: 'For Partners',
+  description: 'IMO/FMO and BGA partnership opportunities. Independent life insurance producer in California.',
+  alternates: {
+    canonical: '/for-partners',
+  },
+};
+
 export default function ForPartnersPage() {
   return (
     <div className="container">
