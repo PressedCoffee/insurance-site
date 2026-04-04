@@ -154,6 +154,15 @@ export function CoverageNeedPage({ analytics = defaultAnalytics }: CoverageNeedP
     const amountStr = String(calculations.estimatedCoverageNeed);
     analytics.coverage_primary_cta_clicked(amountStr);
     
+    // Google Ads: quote_apply_click conversion
+    if (typeof window !== 'undefined' && 'gtag' in window) {
+      (window as any).gtag('event', 'conversion', {
+        'send_to': 'AW-18062438278/4jkPCLPusZUcEIbf66RD',
+        'value': 1.0,
+        'currency': 'USD'
+      });
+    }
+    
     // Attempt to prefill if supported
     const url = new URL(CONFIG.quoteApplyUrl);
     url.searchParams.set('coverage_amount', amountStr);
