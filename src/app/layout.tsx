@@ -48,6 +48,20 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        {/* Google Ads Conversion Tag */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18062438278"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-18062438278');
+            `
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         {children}
         <Footer />
