@@ -14,7 +14,7 @@ import { NextRequest, NextResponse } from "next/server";
 // Logs every event. Writes state alongside eApp data.
 // ---------------------------------------------------------------------------
 
-const BACKNINE_AUTH = process.env.BACKNINE_WEBHOOK_SECRET ?? process.env.BACKNINE_API_KEY ?? "";
+const BACKNINE_WEBHOOK_SECRET = process.env.BACKNINE_CASE_WEBHOOK_SECRET ?? "";
 
 interface CasePayload {
   id: number;
@@ -85,14 +85,14 @@ export async function POST(request: NextRequest) {
   // 1. Validate authentication
   // -----------------------------------------------------------------------
   const authHeader = request.headers.get("x-backnine-authentication");
-  if (!BACKNINE_AUTH) {
-    console.error("[backnine/case] BACKNINE_WEBHOOK_SECRET / BACKNINE_API_KEY not set");
+  if (!BACKNINE_WEBHOOK_SECRET) {
+    console.error("[backnine/case] BACKNINE_CASE_WEBHOOK_SECRET not set");
     return NextResponse.json(
       { error: "Server misconfiguration: webhook secret not set" },
       { status: 500 }
     );
   }
-  if (authHeader !== BACKNINE_AUTH) {
+  if (authHeader !== BACKNINE_WEBHOOK_SECRET) {
     console.warn("[backnine/case] Authentication failed", {
       provided: authHeader?.slice(0, 8) + "...",
     });
@@ -173,12 +173,12 @@ export async function GET(request: NextRequest) {
       status: "ok",
       endpoint: "/api/backnine/case",
       timestamp: new Date().toISOString(),
-      secret_configured: !!BACKNINE_AUTH,
+      secret_configured: !!BACKNINE_WEBHOOK_SECRET,
     });
   }
 
   const authHeader = request.headers.get("x-backnine-authentication");
-  if (authHeader !== BACKNINE_AUTH) {
+  if (authHeader !== BACKNINE_WEBHOOK_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
