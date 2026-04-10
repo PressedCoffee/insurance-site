@@ -406,7 +406,24 @@ export function CoverageNeedPage({ analytics = defaultAnalytics }: CoverageNeedP
               {formatCurrency(calculations.estimatedCoverageNeed)}
             </div>
           </div>
+
+          {/* Immediate CTA - Capture momentum right after result */}
+          {calculations.hasValues && calculations.estimatedCoverageNeed > 0 && (
+            <div className="coverage-results__cta">
+              <button
+                type="button"
+                className="coverage-results__cta-button"
+                onClick={handlePrimaryCta}
+              >
+                Get quotes for {formatCurrency(calculations.estimatedCoverageNeed)} coverage →
+              </button>
+              <p className="coverage-results__cta-helper">
+                Compare rates from 14 top carriers. No phone number required.
+              </p>
+            </div>
+          )}
         </div>
+
       </div>
 
       {/* What This Number Means */}

@@ -302,6 +302,49 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Immediate CTA after result */
+.coverage-results__cta {
+  margin-top: var(--coverage-spacing-xl);
+  padding: var(--coverage-spacing-xl);
+  background: var(--coverage-surface-subtle);
+  border: 1px solid var(--coverage-border);
+  border-radius: var(--coverage-radius);
+  text-align: center;
+}
+
+.coverage-results__cta-button {
+  display: inline-block;
+  width: 100%;
+  padding: var(--coverage-spacing-lg) var(--coverage-spacing-xl);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: white;
+  background: var(--coverage-accent);
+  border: none;
+  border-radius: var(--coverage-radius);
+  cursor: pointer;
+  transition: all var(--coverage-transition);
+  line-height: 1.4;
+}
+
+.coverage-results__cta-button:hover {
+  background: var(--coverage-accent-light);
+  transform: translateY(-1px);
+  box-shadow: var(--coverage-shadow-md);
+}
+
+.coverage-results__cta-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+}
+
+.coverage-results__cta-helper {
+  margin: var(--coverage-spacing-md) 0 0;
+  font-size: 0.8125rem;
+  color: var(--coverage-text-muted);
+  line-height: 1.5;
+}
+
 /* Reset Button */
 .coverage-calculator__reset {
   display: block;
