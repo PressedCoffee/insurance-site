@@ -1,4 +1,4 @@
-import './page.module.css';
+import styles from './page.module.css';
 
 /**
  * For Partners Page
@@ -15,16 +15,16 @@ export const metadata = {
 
 export default function ForPartnersPage() {
   return (
-    <div className="container">
-      <header className="hero">
+    <div className={styles.container}>
+      <header className={styles.hero}>
         <h1>For Partners</h1>
-        <p className="subtitle">
+        <p className={styles.subtitle}>
           A straightforward way to refer people who need life insurance —
           without the usual friction.
         </p>
       </header>
 
-      <section className="section">
+      <section className={styles.section}>
         <h2>Who This Serves</h2>
         <p>
           Your clients or contacts who:
@@ -35,55 +35,55 @@ export default function ForPartnersPage() {
           <li>Value transparency over persuasion</li>
           <li>Are California residents</li>
         </ul>
-        <p className="note">
+        <p className={styles.note}>
           This is term life insurance — not investments, not whole life, not complex products.
           Coverage amounts from $100K to $2M+. Ages 18–60.
         </p>
       </section>
 
-      <section className="section">
+      <section className={styles.section}>
         <h2>How It Works</h2>
         
-        <div className="steps">
-          <div className="step">
-            <span className="step-number">1</span>
+        <div className={styles.steps}>
+          <div className={styles.step}>
+            <span className={styles['step-number']}>1</span>
             <h3>You Send the Link</h3>
             <p>Your custom URL with attribution. They land on the coverage calculator.</p>
           </div>
           
-          <div className="step">
-            <span className="step-number">2</span>
+          <div className={styles.step}>
+            <span className={styles['step-number']}>2</span>
             <h3>They Self-Educate</h3>
             <p>Transparent calculator. No forms to fill, no phone number required.</p>
           </div>
           
-          <div className="step">
-            <span className="step-number">3</span>
+          <div className={styles.step}>
+            <span className={styles['step-number']}>3</span>
             <h3>They Choose Their Path</h3>
             <p>Quote & Apply if they want to move forward. Advisor review only if needed.</p>
           </div>
         </div>
       </section>
 
-      <section className="section">
+      <section className={styles.section}>
         <h2>Why This Is Different</h2>
         
-        <div className="comparison">
-          <div className="comparison-col">
+        <div className={styles.comparison}>
+          <div className={styles['comparison-col']}>
             <h4>Typical Agent</h4>
             <ul>
               <li>Lead form → immediate phone call</li>
-              <li>"Let me explain why you need this"</li>
+              <li>&quot;Let me explain why you need this&quot;</li>
               <li>Opaque underwriting process</li>
               <li>Pressure to decide quickly</li>
             </ul>
           </div>
           
-          <div className="comparison-col highlight">
+          <div className={`${styles['comparison-col']} ${styles.highlight}`}>
             <h4>This Model</h4>
             <ul>
               <li>Calculator first → informed decision</li>
-              <li>"Here is what is actually going on"</li>
+              <li>&quot;Here is what is actually going on&quot;</li>
               <li>Transparent underwriting process</li>
               <li>Move at their pace</li>
             </ul>
@@ -91,25 +91,25 @@ export default function ForPartnersPage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className={styles.section}>
         <h2>Your Custom Link</h2>
         <p>
           Every partner gets a unique URL. This tracks attribution correctly and 
           lets you see how many people you have sent — if you want.
         </p>
         
-        <div className="link-example">
+        <div className={styles['link-example']}>
           <code>
             https://rostineinsurance.com/?utm_source=partner_jane-smith&amp;utm_medium=email
           </code>
         </div>
         
-        <p className="note">
+        <p className={styles.note}>
           Want a custom URL? <a href="mailto:ryan@rostineinsurance.com">Email Ryan</a> with your preferred identifier.
         </p>
       </section>
 
-      <section className="section">
+      <section className={styles.section}>
         <h2>About Ryan</h2>
         <p>
           Ryan Rostine is a California-licensed life insurance producer (#4479678) 
@@ -123,7 +123,7 @@ export default function ForPartnersPage() {
         </p>
       </section>
 
-      <section className="section">
+      <section className={styles.section}>
         <h2>Referral Guidelines</h2>
         
         <ul>
@@ -132,11 +132,6 @@ export default function ForPartnersPage() {
           <li><strong>The ask:</strong> Send the link when the topic naturally comes up. No scripts needed.</li>
         </ul>
       </section>
-
-      <footer className="footer">
-        <p><a href="mailto:ryan@rostineinsurance.com">ryan@rostineinsurance.com</a></p>
-        <p><a href="/">Coverage Calculator →</a></p>
-      </footer>
     </div>
   );
 }
