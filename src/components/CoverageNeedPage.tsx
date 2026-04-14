@@ -92,10 +92,11 @@ function getCoverageBucket(amount: number): string {
 
 interface CoverageNeedPageProps {
   analytics?: AnalyticsEvents;
+  initialValues?: Partial<CalculatorState>;
 }
 
-export function CoverageNeedPage({ analytics = defaultAnalytics }: CoverageNeedPageProps): React.ReactElement {
-  const [state, setState] = useState<CalculatorState>(DEFAULT_STATE);
+export function CoverageNeedPage({ analytics = defaultAnalytics, initialValues }: CoverageNeedPageProps): React.ReactElement {
+  const [state, setState] = useState<CalculatorState>({ ...DEFAULT_STATE, ...initialValues });
   const [hasInteracted, setHasInteracted] = useState(false);
 
   useEffect(() => {
@@ -154,10 +155,12 @@ export function CoverageNeedPage({ analytics = defaultAnalytics }: CoverageNeedP
     const amountStr = String(calculations.estimatedCoverageNeed);
     analytics.coverage_primary_cta_clicked(amountStr);
     
-    // Google Ads: quote_apply_click conversion
-    if (typeof window !== 'undefined' && 'gtag' in window) {
+    // Google Ads: quote_apply_click conversion (skip if opted out)
+    const optedOut = typeof localStorage !== 'undefined' && localStorage.getItem('privacy_opt_out') === 'true';
+    const gpcActive = typeof navigator !== 'undefined' && 'globalPrivacyControl' in navigator && (navigator as any).globalPrivacyControl === true;
+    if (!optedOut && !gpcActive && typeof window !== 'undefined' && 'gtag' in window) {
       (window as any).gtag('event', 'conversion', {
-        'send_to': 'AW-18062438278/4jkPCLPusZUcEIbf66RD',
+        'send_to': `${(process.env.NEXT_PUBLIC_GADS_ID || '').trim()}/4jkPCLPusZUcEIbf66RD`,
         'value': 1.0,
         'currency': 'USD'
       });

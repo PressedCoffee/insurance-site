@@ -3,75 +3,71 @@
 import Script from 'next/script';
 import { useEffect } from 'react';
 
-// GA4 Measurement ID (placeholder - Ryan to provide real one)
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX';
+// Env-var-gated tracking IDs — only load when a real ID is configured
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || '';
+const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || '';
+const GADS_CONVERSION_ID = (process.env.NEXT_PUBLIC_GADS_ID || '').trim();
 
-// Meta Pixel ID (placeholder - Ryan to provide real one)
-const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || 'XXXXXXXXXX';
-
-// Google Ads Conversion ID (placeholder)
-const GADS_CONVERSION_ID = process.env.NEXT_PUBLIC_GADS_ID || 'AW-XXXXXXXXXX';
+const hasGA = GA_MEASUREMENT_ID.length > 0;
+const hasMeta = META_PIXEL_ID.length > 0;
+const hasGAds = GADS_CONVERSION_ID.length > 0;
 
 /**
  * Analytics Provider Component
- * Loads GA4, Meta Pixel, Google Ads tags
- * Coarse-grained tracking only - no PII
+ * Only loads tracking scripts when real IDs are configured via env vars.
+ * No placeholder/fallback IDs — prevents dead HTTP requests and unwanted cookies.
  */
 export function AnalyticsProvider() {
   return (
     <>
-      {/* Google Analytics 4 */}
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-        strategy="afterInteractive"
-      />
-      <Script id="ga4-init" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${GA_MEASUREMENT_ID}', {
-            send_page_view: true,
-            cookie_flags: 'Secure;SameSite=None',
-            cookie_expires: 63072000, // 2 years
-            custom_map: {
-              'custom_parameter_1': 'engagement_bucket',
-              'custom_parameter_2': 'coverage_bucket',
-              'custom_parameter_3': 'age_bucket'
-            }
-          });
-        `}
-      </Script>
+      {/* Google Analytics 4 — only if NEXT_PUBLIC_GA_ID is set */}
+      {hasGA && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+            strategy="afterInteractive"
+          />
+          <Script id="ga4-init" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_MEASUREMENT_ID}', {
+                send_page_view: true,
+                cookie_flags: 'Secure;SameSite=None',
+                cookie_expires: 63072000,
+                custom_map: {
+                  'custom_parameter_1': 'engagement_bucket',
+                  'custom_parameter_2': 'coverage_bucket',
+                  'custom_parameter_3': 'age_bucket'
+                }
+              });
+            `}
+          </Script>
+        </>
+      )}
 
-      {/* Meta Pixel */}
-      <Script id="meta-pixel" strategy="afterInteractive">
-        {`
-          !function(f,b,e,v,n,t,s)
-          {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-          if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-          n.queue=[];t=b.createElement(e);t.async=!0;
-          t.src=v;s=b.getElementsByTagName(e)[0];
-          s.parentNode.insertBefore(t,s)}(window, document,'script',
-          'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', '${META_PIXEL_ID}');
-          fbq('track', 'PageView');
-        `}
-      </Script>
+      {/* Meta Pixel — only if NEXT_PUBLIC_META_PIXEL_ID is set */}
+      {hasMeta && (
+        <Script id="meta-pixel" strategy="afterInteractive">
+          {`
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '${META_PIXEL_ID}');
+            fbq('track', 'PageView');
+          `}
+        </Script>
+      )}
 
-      {/* Google Ads Tag */}
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GADS_CONVERSION_ID}`}
-        strategy="afterInteractive"
-      />
-      <Script id="gads-init" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${GADS_CONVERSION_ID}');
-        `}
-      </Script>
+      {/* Google Ads Tag is loaded in layout.tsx <head> with consent defaults.
+          GAds init is NOT repeated here — layout handles it once with
+          consent mode set before config. */}
     </>
   );
 }
@@ -107,7 +103,7 @@ export function getCoarseBucket(value: number, type: 'coverage' | 'age'): string
 }
 
 /**
- * Track custom event in GA4
+ * Track custom event in GA4 and/or Meta Pixel (only if loaded)
  * @param eventName - event name (snake_case)
  * @param params - event parameters
  */
@@ -119,7 +115,6 @@ export function trackEvent(
     (window as any).gtag('event', eventName, params);
   }
   
-  // Also track in Meta Pixel for retargeting
   if (typeof window !== 'undefined' && (window as any).fbq) {
     (window as any).fbq('trackCustom', eventName, params);
   }
@@ -157,7 +152,7 @@ export const analytics = {
       term_years: params.termYears
     });
     
-    // Fire Meta Pixel lead event for retargeting
+    // Fire Meta Pixel lead event for retargeting (only if loaded)
     if (typeof window !== 'undefined' && (window as any).fbq) {
       (window as any).fbq('track', 'Lead', {
         content_name: 'coverage_estimate',
@@ -173,7 +168,7 @@ export const analytics = {
       event_label: source
     });
     
-    // Fire Meta Pixel conversion
+    // Fire Meta Pixel conversion (only if loaded)
     if (typeof window !== 'undefined' && (window as any).fbq) {
       (window as any).fbq('track', 'InitiateCheckout');
     }
@@ -193,6 +188,37 @@ export const analytics = {
     trackEvent('time_on_page', {
       event_category: 'engagement',
       seconds_bucket: bucket
+    });
+  },
+
+  // Audit funnel events
+  auditStarted: () => {
+    trackEvent('audit_started', {
+      event_category: 'engagement',
+      event_label: 'continuity_audit'
+    });
+  },
+
+  auditCompleted: (status: string) => {
+    trackEvent('audit_completed', {
+      event_category: 'conversion',
+      audit_status: status
+    });
+
+    // Fire Meta Pixel lead event for audit completions
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('track', 'Lead', {
+        content_name: 'continuity_audit',
+        value: 0.00,
+        currency: 'USD'
+      });
+    }
+  },
+
+  auditToCalculator: (status: string) => {
+    trackEvent('audit_to_calculator', {
+      event_category: 'conversion',
+      audit_status: status
     });
   }
 };

@@ -16,6 +16,7 @@
 
 .row {
   text-align: center;
+  line-height: 1.5;
 }
 
 .license {
@@ -24,11 +25,31 @@
   font-weight: 500;
 }
 
+.disclaimer {
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
 .links {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
+}
+
+.privacyLink {
+  color: #6b7280;
+  text-decoration: underline;
+  text-decoration-color: #9ca3af;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+  font-size: 0.75rem;
+}
+
+.privacyLink:hover {
+  color: #111827;
+  text-decoration-color: #111827;
 }
 
 .link {
@@ -49,5 +70,10 @@
 @media (max-width: 640px) {
   .footer {
     padding: 1.25rem 1rem;
+  }
+
+  .links {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
