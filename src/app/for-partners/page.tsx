@@ -42,25 +42,25 @@ export default function ForPartnersPage() {
       </section>
 
       <section className={styles.section}>
-        <h2>How It Works</h2>
+        <h2>How It Works for Your Clients</h2>
         
         <div className={styles.steps}>
           <div className={styles.step}>
             <span className={styles['step-number']}>1</span>
-            <h3>You Send the Link</h3>
-            <p>Your custom URL with attribution. They land on the coverage calculator.</p>
+            <h3>They Get the Link</h3>
+            <p>You send your custom referral URL. They click it and land on a 2-minute quote path.</p>
           </div>
           
           <div className={styles.step}>
             <span className={styles['step-number']}>2</span>
-            <h3>They Self-Educate</h3>
-            <p>Transparent calculator. No forms to fill, no phone number required.</p>
+            <h3>They Quote & Apply</h3>
+            <p>They run a term-life quote immediately — no phone number required, no pressure.</p>
           </div>
           
           <div className={styles.step}>
             <span className={styles['step-number']}>3</span>
-            <h3>They Choose Their Path</h3>
-            <p>Quote & Apply if they want to move forward. Advisor review only if needed.</p>
+            <h3>You Stay Informed</h3>
+            <p>When they apply, you get notified. Ryan handles everything else.</p>
           </div>
         </div>
       </section>

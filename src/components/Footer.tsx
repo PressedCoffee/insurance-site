@@ -40,6 +40,10 @@ export default function Footer() {
           <Link href="/continuity-audit" className={styles.link}>
             Continuity Audit
           </Link>
+          <span className={styles.separator}>|</span>
+          <Link href="/life-desk" className={styles.link}>
+            Life Desk
+          </Link>
         </div>
       </div>
     </footer>
