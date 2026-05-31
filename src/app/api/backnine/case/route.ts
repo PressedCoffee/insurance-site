@@ -1,112 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
+import { authenticateRequest } from "@/lib/backnine/auth";
+import {
+  processCaseEvent,
+  getAllCaseStates,
+  getCaseEvents,
+} from "@/lib/backnine/events";
+import type { CasePayload } from "@/lib/backnine/types";
 
-// ---------------------------------------------------------------------------
-// BackNine Case Webhook
-// POST /api/backnine/case
-//
-// Receives case lifecycle events from BackNine BOSS:
-//   - Case created
-//   - Case status changes (Underwriting, Approved, Issued, etc.)
-//   - Policy details updated
-//   - Commission changes
-//
-// Validates via X-BACKNINE-AUTHENTICATION header.
-// Logs every event. Writes state alongside eApp data.
-// ---------------------------------------------------------------------------
-
-const BACKNINE_WEBHOOK_SECRET = process.env.BACKNINE_CASE_WEBHOOK_SECRET ?? "";
-
-interface CasePayload {
-  id: number;
-  created_at?: string;
-  updated_at?: string;
-  status?: string;
-  policy_number?: string | null;
-  product?: {
-    id: number;
-    name: string;
-    carrier?: { id: number; name: string };
-  };
-  insured?: {
-    id: number;
-    name: string;
-  };
-  agent?: {
-    id: number;
-    name: string;
-  };
-  premium?: number;
-  face_amount?: number;
-  [key: string]: unknown;
-}
-
-const STATE_DIR = "/tmp/backnine-state";
-const CASE_STATE_FILE = `${STATE_DIR}/cases.json`;
-
-function readCaseState(): Record<string, CasePayload> {
-  try {
-    const fs = require("fs");
-    if (!fs.existsSync(STATE_DIR)) fs.mkdirSync(STATE_DIR, { recursive: true });
-    if (!fs.existsSync(CASE_STATE_FILE)) return {};
-    return JSON.parse(fs.readFileSync(CASE_STATE_FILE, "utf-8"));
-  } catch {
-    return {};
-  }
-}
-
-function writeCaseState(state: Record<string, CasePayload>): void {
-  try {
-    const fs = require("fs");
-    if (!fs.existsSync(STATE_DIR)) fs.mkdirSync(STATE_DIR, { recursive: true });
-    fs.writeFileSync(CASE_STATE_FILE, JSON.stringify(state, null, 2));
-  } catch (err) {
-    console.error("[backnine/case] Failed to write state:", err);
-  }
-}
-
-function logEvent(event: string, payload: CasePayload, meta?: Record<string, unknown>) {
-  const entry = {
-    timestamp: new Date().toISOString(),
-    source: "backnine-case-webhook",
-    event,
-    case_id: payload.id,
-    insured: payload.insured?.name ?? "unknown",
-    status: payload.status,
-    product: payload.product?.name,
-    carrier: payload.product?.carrier?.name,
-    policy_number: payload.policy_number,
-    ...meta,
-  };
-  console.log(JSON.stringify(entry));
-}
+const BACKNINE_CASE_SECRET = process.env.BACKNINE_CASE_WEBHOOK_SECRET ?? "";
 
 export async function POST(request: NextRequest) {
-  // -----------------------------------------------------------------------
-  // 1. Validate authentication
-  // -----------------------------------------------------------------------
-  const authHeader = request.headers.get("x-backnine-authentication");
-  if (!BACKNINE_WEBHOOK_SECRET) {
+  // BackNine BOSS sends webhook auth via X-BACKNINE-AUTHENTICATION header
+  const authHeader = request.headers.get("x-backnine-authentication") ?? "";
+  const authFallback = request.headers.get("authorization") ?? "";
+
+  if (!BACKNINE_CASE_SECRET) {
     console.error("[backnine/case] BACKNINE_CASE_WEBHOOK_SECRET not set");
     return NextResponse.json(
       { error: "Server misconfiguration: webhook secret not set" },
       { status: 500 }
     );
   }
-  if (authHeader !== BACKNINE_WEBHOOK_SECRET) {
-    console.warn("[backnine/case] Authentication failed", {
-      provided: authHeader?.slice(0, 8) + "...",
-    });
+  if (authHeader !== BACKNINE_CASE_SECRET && authFallback !== BACKNINE_CASE_SECRET) {
+    console.warn("[backnine/case] Authentication failed");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // -----------------------------------------------------------------------
-  // 2. Parse payload
-  // -----------------------------------------------------------------------
   let payload: CasePayload;
   try {
     payload = await request.json();
   } catch {
-    console.warn("[backnine/case] Invalid JSON payload");
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
@@ -114,77 +37,45 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing case id" }, { status: 400 });
   }
 
-  // -----------------------------------------------------------------------
-  // 3. Determine event type
-  // -----------------------------------------------------------------------
-  let eventType = "case.updated";
-  // Detect new vs updated by checking state
-  const state = readCaseState();
-  const isNew = !state[String(payload.id)];
-  if (isNew) {
-    eventType = "case.created";
-  }
+  const result = await processCaseEvent(payload);
 
-  // -----------------------------------------------------------------------
-  // 4. Log the event
-  // -----------------------------------------------------------------------
-  logEvent(eventType, payload);
+  console.log(
+    JSON.stringify({
+      timestamp: new Date().toISOString(),
+      source: "backnine-case-webhook",
+      event: result.eventType,
+      case_id: payload.id,
+      insured: payload.insured?.name ?? "unknown",
+      status: payload.status,
+      isNew: result.isNew,
+      stateStatus: result.state.status,
+    })
+  );
 
-  // -----------------------------------------------------------------------
-  // 5. Update state
-  // -----------------------------------------------------------------------
-  const prevRecord = state[String(payload.id)];
-  const statusChanged = prevRecord && prevRecord.status !== payload.status;
-
-  state[String(payload.id)] = {
-    ...prevRecord,
-    ...payload,
-    _lastWebhookAt: new Date().toISOString(),
-    _eventType: eventType,
-  };
-  writeCaseState(state);
-
-  if (statusChanged) {
-    logEvent("case.status_change", payload, {
-      fromStatus: prevRecord?.status,
-      toStatus: payload.status,
-    });
-  }
-
-  // -----------------------------------------------------------------------
-  // 6. Respond
-  // -----------------------------------------------------------------------
   return NextResponse.json({
     ok: true,
-    event: eventType,
+    event: result.eventType,
     case_id: payload.id,
+    state: result.state.status,
   });
 }
 
-// ---------------------------------------------------------------------------
-// GET — health check / test verification
-// ---------------------------------------------------------------------------
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const verify = searchParams.get("verify");
-
-  if (verify) {
-    return NextResponse.json({
-      status: "ok",
-      endpoint: "/api/backnine/case",
-      timestamp: new Date().toISOString(),
-      secret_configured: !!BACKNINE_WEBHOOK_SECRET,
-    });
-  }
-
-  const authHeader = request.headers.get("x-backnine-authentication");
-  if (authHeader !== BACKNINE_WEBHOOK_SECRET) {
+  if (!authenticateRequest(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const state = readCaseState();
+  const { searchParams } = new URL(request.url);
+  const caseId = searchParams.get("case_id");
+
+  if (caseId) {
+    const events = await getCaseEvents(caseId);
+    return NextResponse.json({ case_id: caseId, events });
+  }
+
+  const states = await getAllCaseStates();
   return NextResponse.json({
-    count: Object.keys(state).length,
-    cases: state,
+    count: Object.keys(states).length,
+    cases: states,
   });
 }

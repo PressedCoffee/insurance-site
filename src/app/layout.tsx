@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AnalyticsProvider from "../components/Analytics";
 import Footer from "../components/Footer";
+import OptOutProvider from "../components/OptOutProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,6 +39,9 @@ export const metadata: Metadata = {
   },
 };
 
+// Google Ads Conversion Tag — only rendered when the env var is set
+const GADS_ID = (process.env.NEXT_PUBLIC_GADS_ID || '').trim();
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,23 +53,37 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        {/* Google Ads Conversion Tag */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18062438278"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'AW-18062438278');
-            `
-          }}
-        />
+        {GADS_ID && (
+          <>
+            {/* Consent default must be set BEFORE gtag config.
+                Reads localStorage + GPC synchronously to determine state.
+                This inline script runs before any async gtag scripts. */}
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  var optOut = (typeof localStorage !== 'undefined' && localStorage.getItem('privacy_opt_out') === 'true')
+                    || (typeof navigator !== 'undefined' && 'globalPrivacyControl' in navigator && navigator.globalPrivacyControl === true);
+                  gtag('consent', 'default', {
+                    ad_storage: optOut ? 'denied' : 'granted',
+                    analytics_storage: 'denied',
+                  });
+                  gtag('js', new Date());
+                  gtag('config', '${GADS_ID}');
+                `
+              }}
+            />
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${GADS_ID}`}></script>
+          </>
+        )}
       </head>
       <body className="min-h-full flex flex-col">
-        {children}
-        <Footer />
-        <AnalyticsProvider />
+        <OptOutProvider>
+          {children}
+          <Footer />
+          <AnalyticsProvider />
+        </OptOutProvider>
       </body>
     </html>
   );

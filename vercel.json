@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/backnine/eapp?abandoned=1",
+      "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/backnine/followup",
+      "schedule": "0 15 * * *"
+    }
+  ]
+}
